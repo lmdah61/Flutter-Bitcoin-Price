@@ -1,18 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class BitcoinPriceWidget extends StatefulWidget {
   const BitcoinPriceWidget({Key? key}) : super(key: key);
 
   @override
-  _BitcoinPriceWidgetState createState() => _BitcoinPriceWidgetState();
+  State<BitcoinPriceWidget> createState() => _BitcoinPriceWidgetState();
 }
 
 class _BitcoinPriceWidgetState extends State<BitcoinPriceWidget> {
-  late Stream<double> _stream;
-  late double _currentPrice;
+  late final Stream<double> _stream = getBitcoinPriceStream();
+  late double _currentPrice = 0.0;
 
   Stream<double> getBitcoinPriceStream() async* {
     while (true) {
@@ -26,16 +27,10 @@ class _BitcoinPriceWidgetState extends State<BitcoinPriceWidget> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _stream = getBitcoinPriceStream();
-    _currentPrice = 0.0;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return StreamBuilder<double>(
       stream: _stream,
+      initialData: _currentPrice,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           _currentPrice = snapshot.data!;
